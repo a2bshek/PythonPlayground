@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<HTML>
+    <HEAD>
+        <meta charset='utf-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <title>User Login</title>
+        <style>
+            body 
+            {
+                background-color: #191919;
+            }
+            .main 
+            {
+                background-color: #FFFFFF;
+                width: 400px;
+                padding: 30px;
+                margin: 9em auto;
+                border-radius: 1.5em;
+                align-items: center;
+            }    
+            .sign 
+            {
+                color: #0077ff;
+                font-weight: bold;
+                font-size: 23px;
+            }
+            .un
+            {
+                width: 76%;
+                color: #000;
+                font-weight: 700;
+                font-size: 14px;
+                letter-spacing: 1px;
+                background: rgba(136, 126, 126, 0.04);
+                padding: 10px 20px;
+                border: none;
+                border-radius: 20px;
+                outline: none;
+                box-sizing: border-box;
+                border: 2px solid #191919;
+                margin-bottom: 50px;
+                margin-left: 46px;
+                text-align: center;
+                margin-bottom: 27px;
+            }
+            .pass 
+            {
+                width: 76%;
+                color: rgb(38, 50, 56);
+                font-weight: 700;
+                font-size: 14px;
+                letter-spacing: 1px;
+                background: rgba(136, 126, 126, 0.04);
+                padding: 10px 20px;
+                border: none;
+                border-radius: 20px;
+                outline: none;
+                box-sizing: border-box;
+                border: 2px solid #191919;
+                margin-bottom: 50px;
+                margin-left: 46px;
+                text-align: center;
+                margin-bottom: 27px;
+                font-family: 'Ubuntu', sans-serif;
+            }
+            .submit 
+            {
+                cursor: pointer;
+                border-radius: 5em;
+                color: #fff;
+                background: #0066ff;
+                padding-left: 40px;
+                padding-right: 40px;
+                padding-bottom: 10px;
+                padding-top: 10px;
+                margin-left: 35%;
+                font-size: 13px;
+            }
+        </style>
+    </HEAD>
+    <BODY>
+        <div class='main'>
+            <p class='sign' align='center'>Login</p>
+            <form action='./loginuser' method="POST" >
+                {% csrf_token %}
+                <input class='un' type='text' align='center' placeholder='Username' name='username' />
+                <input class='pass' type='password' align='center' placeholder='Password' name='pass' />
+                <input class='submit' align='center' name='login' value='Login' type='submit' />
+            </form>
+        </div>
+    </BODY>
+</HTML>
