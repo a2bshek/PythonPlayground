@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Quiz App</title>
+
+    <style>
+      *, *::before, *::after 
+      {
+        box-sizing: border-box;
+        font-family: Gotham Rounded;
+        margin: 0;
+        padding: 0;
+      }
+      body 
+      {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background-color: #68b0d9;
+      }
+      h3 
+      {
+        margin: 10px 0px;
+      }
+      .mainHeader 
+      {
+        padding-bottom: 0.3rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid grey;
+      }
+
+      .quizArea {
+        width: 60vw;
+        max-width: 90%;
+        background-color: white;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0 0 10px 2px;
+      }
+
+      .buttonArea {
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      button {
+        --hue: var(--hue-neutral);
+        border: 1px solid grey;
+        background-color: #0e2939;
+        border-radius: 5px;
+        padding: 5px 10px;
+        color: white;
+        outline: none;
+      }
+
+      button:hover {
+        border-color: black;
+      }
+
+      .start {
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 10px 20px;
+        margin: 10px 0px;
+      }
+
+      .controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .hide {
+        display: none;
+      }
+
+      .scoresList {
+        text-decoration: none;
+        list-style-type: none;
+        margin: 0.3rem 0;
+      }
+
+      #highScoresList {
+        margin: 1rem 0;
+      }
+
+      #scoreArea {
+        padding-bottom: 1rem;
+        border-bottom: 1px solid grey;
+      }
+
+      #init {
+        margin-top: 0.7rem;
+      }
+      #initials {
+        margin: 0.3rem;
+      }
+
+      #save-btn {
+        margin: 0.7rem;
+      }
+
+      #showScoresButton {
+        margin-top: 0.3rem;
+      }
+
+      @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        .buttonArea {
+          display: grid;
+          grid-template-columns: none;
+          gap: 10px;
+          margin: 20px 0;
+        }
+      }
+    </style>
+
+  </head>
+  <body>
+    <main class="quizArea">
+      <header class="mainHeader">
+        <h1>Start the Quiz</h1>
+        <span id="timerArea"></span>
+      </header>
+      <section id="questionsContainer" class="hide">
+        <div id="question"></div>
+        <div id="answers" class="buttonArea"></div>
+      </section>
+      <section class="scores">
+        <div id="scoreArea" class="hide"></div>
+      </section>
+      <section class="controls">
+        <button class="start" id="startButton">START</button>
+        <button class="btn" id="showScoresButton">See High Scores</button>
+        <br />
+        <div id="scoreArea" class="hide">
+          <span id="scoreDisplay"></span>
+          <input type="text" name="initials" id="initials" />
+          <button id="submitScore" class="submit">Submit Score</button>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      let timer = 90;
+      let runningTimer;
+      let score = 0;
+      let username = "";
+      let qNumber;
+      let finalScore;
+      const MAX_HIGH_SCORES = 7;
+
+      const startButton = document.getElementById("startButton");
+      const qContainer = document.getElementById("questionsContainer");
+      const qElement = document.getElementById("question");
+      const answerButtons = document.getElementById("answers");
+      const countdown = document.getElementById("timerArea");
+      const scoreArea = document.getElementById("scoreArea");
+      const highScoresButton = document.getElementById("showScoresButton");
+
+      let highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+
+      startButton.addEventListener("click", startGame);
+      highScoresButton.addEventListener("click", displayScores);
+
+      function startGame() {
+        startButton.classList.add("hide");
+        scoreArea.classList.add("hide");
+        answerButtons.classList.remove("hide");
+        qNumber = 0;
+        qContainer.classList.remove("hide");
+        scoreArea.innerHTML = "";
+        startClock();
+        while (answerButtons.firstChild) {
+          answerButtons.removeChild(answerButtons.firstChild);
+        }
+        showQuestion(questions[qNumber]);
+      }
+      function showQuestion(question) {
+        qElement.innerText = question.question;
+        question.answers.forEach(answer => {
+          const button = document.createElement("button");
+          button.innerText = answer.text;
+          button.classList.add("btn");
+          if (answer.correct) {
+            button.dataset.correct = answer.correct;
+          }
+          button.addEventListener("click", selectAnswer);
+          answerButtons.appendChild(button);
+        });
+      }
+      function startClock() {
+        countdown.innerHTML = "Time Remaining: " + timer;
+        if (timer <= 0) {
+          gameOver();
+        } else {
+          timer -= 1;
+          runningTimer = setTimeout(startClock, 1000);
+        }
+      }
+      function selectAnswer(e) {
+        const selectedButton = e.target;
+        if (!selectedButton.dataset.correct) {
+          timer = timer - 10;
+          console.log(timer);
+        }
+        if (qNumber == questions.length - 1) {
+          gameOver();
+        } else {
+          clearQuestion();
+          qNumber++;
+          showQuestion(questions[qNumber]);
+          console.log(score);
+        }
+      }
+      function clearQuestion() {
+        while (answerButtons.firstChild) {
+          answerButtons.removeChild(answerButtons.firstChild);
+        }
+      }
+      function gameOver() {
+        clearInterval(runningTimer);
+        countdown.innerHTML = "Finished";
+        clearQuestion();
+        showResults();
+        startButton.innerText = "Restart";
+        startButton.classList.remove("hide");
+        timer = 90;
+        score = 0;
+      }
+
+      function showResults() {
+        finalScore = timer;
+        if (finalScore < 0) {
+          finalScore = 0;
+        }
+        qElement.innerText = "";
+        scoreArea.classList.remove("hide");
+        answerButtons.classList.add("hide");
+        scoreArea.innerHTML = `Your score is ${finalScore}!<div id="init">Name: <input type="text" name="initials" id="initials" placeholder="Enter Your Name"><button id="save-btn" class="save-btn btn" onclick="submitScores(event)" disabled>Save</button>`;
+        username = document.getElementById("initials");
+        saveButton = document.getElementById("save-btn");
+        username.addEventListener("keyup", function() {
+          saveButton.disabled = !username.value;
+        });
+      }
+      function submitScores(e) {
+        const score = {
+          score: finalScore,
+          name: username.value
+        };
+        highScores.push(score);
+        highScores.sort((a, b) => b.score - a.score);
+        highScores.splice(MAX_HIGH_SCORES);
+
+        localStorage.setItem("highScores", JSON.stringify(highScores));
+        displayScores();
+      }
+      function displayScores() {
+        clearInterval(runningTimer);
+        countdown.innerHTML = "";
+        clearQuestion();
+        qElement.innerText = "";
+        scoreArea.classList.remove("hide");
+
+        scoreArea.innerHTML = `<h2>High Scores</h2><ul id="highScoresList"></ul><button id="clearScores" class="btn" onclick="clearScores()">Clear Scores</button>`;
+        const highScoresList = document.getElementById("highScoresList");
+        highScoresList.innerHTML = highScores
+          .map(score => {
+            return `<li class="scoresList">${score.name} - ${score.score}</li>`;
+          })
+          .join("");
+        startButton.classList.remove("hide");
+        highScoresButton.classList.add("hide");
+      }
+      function clearScores() {
+        highScores = [];
+        highScoresList.innerHTML = "<h3>Scores have been Cleared</h3>";
+        document.getElementById("clearScores").classList.add("hide");
+      }
+      //Questions
+      const questions = [
+        {
+          question: "1+1",
+          answers: [
+            { text: "3", correct: false },
+            { text: "2", correct: true },
+            { text: "4", correct: false },
+            { text: "5", correct: false }
+          ]
+        },
+        {
+          question: "2+1",
+          answers: [
+            { text: "2", correct: false },
+            { text: "3", correct: true },
+            { text: "4", correct: false },
+            { text: "5", correct: false }
+          ]
+        },
+        {
+          question: "3+1",
+          answers: [
+            { text: "3", correct: false },
+            { text: "2", correct: false },
+            { text: "4", correct: true },
+            { text: "5", correct: false }
+          ]
+        },
+        {
+          question: "4+1",
+          answers: [
+            { text: "3", correct: false },
+            { text: "2", correct: false },
+            { text: "4", correct: false },
+            { text: "5", correct: true }
+          ]
+        },
+        {
+          question: "5+1",
+          answers: [
+            { text: "3", correct: false },
+            { text: "6", correct: true },
+            { text: "4", correct: false },
+            { text: "5", correct: false }
+          ]
+        },
+        {
+          question: "6+1",
+          answers: [
+            { text: "3", correct: false },
+            { text: "7", correct: true },
+            { text: "4", correct: false },
+            { text: "5", correct: false }
+          ]
+        },
+        {
+          question: "7+1",
+          answers: [
+            { text: "3", correct: false },
+            { text: "8", correct: true },
+            { text: "4", correct: false },
+            { text: "5", correct: false }
+          ]
+        },
+        {
+          question: "8+1",
+          answers: [
+            { text: "3", correct: false },
+            { text: "9", correct: true },
+            { text: "4", correct: false },
+            { text: "5", correct: false }
+          ]
+        },
+        {
+          question: "9+1",
+          answers: [
+            { text: "3", correct: false },
+            { text: "10", correct: true },
+            { text: "4", correct: false },
+            { text: "5", correct: false }
+          ]
+        },
+        {
+          question: "10+1",
+          answers: [
+            { text: "3", correct: false },
+            { text: "11", correct: true },
+            { text: "4", correct: false },
+            { text: "5", correct: false }
+          ]
+        },
+      ];
+    </script>
+    
+  </body>
+</html>
