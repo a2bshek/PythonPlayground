@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Result Portal</title>
+    <style>
+        .header
+        {
+            align-items:"center";
+            padding-left: 250px;
+        }
+        .title
+        {
+            padding-left: 300px;
+            font-size:30px;
+            font-weight:bold;
+            color:maroon;
+            border-radius: 5px;
+            border-width: 10px;
+            border-style: double;
+            border-color: red;
+            height: 150px;
+        }
+        p
+        {
+            border-radius: 5px;
+            border-width: 4px;
+            border-bottom: double;
+            border-color: red;
+            position: absolute;
+        }
+        .img
+        {
+            width:1000px;
+            height:100px;
+            border-radius: 5px;
+            border-width: 10px;
+            border-style: double;
+            border-color: red;
+        }
+        .form
+        {
+            position: absolute;
+            padding-top: 100px;
+            padding-left: 250px;
+        }
+        .textbox 
+        {
+            padding: 8px 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid red;
+            border-radius: 5px;
+        }
+        .button 
+        {
+            padding: 8px 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid red;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: white; 
+            color: black; 
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="./Images/srec.png" class="img">
+    </div>
+    <div class="title">
+        <p>
+            Pre Final Year B.E / B.Tech Examinations Results Odd Semester - 2021
+        </p>
+        <form action="./cgi-bin/result.py" class="form">
+            <label>Roll number</label>
+            <input type="number" name="roll" class="textbox">
+            <button type="submit" class="button">Get Results</button>
+        </form>
+    </div>
+</body>
+</html>
