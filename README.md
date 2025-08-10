@@ -8,3 +8,4 @@ Common Gateway Interface: CGI (Common Gateway Interface) allows web servers to i
 Certificate Name Printer: Automate your certificate printing with our tool that uses a font file, certificate template, and a list of names to effortlessly generate personalized certificates.
 Blogger App: Create, publish, and manage your blog posts effortlessly with our Django-powered blogging application.
 Quiz App: Engage users with our Django-powered quiz application, offering seamless creation, management, and participation in quizzes.
+Drug Prediction: ML model that uses less dataset and generates more data based in the input and uses the generated results as a dataset for processing.
